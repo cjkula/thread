@@ -1,0 +1,9 @@
+<h3>Transactions</h3>
+
+<ul class="transaction">
+  <li ng-repeat="transaction in transactions">
+    <a href="#/transactions/{{transaction.uid}}">{{transaction.uid}}</a>
+  </li>
+</ul>
+
+<a href="#/transactions/new" class="btn">New Transaction</a>

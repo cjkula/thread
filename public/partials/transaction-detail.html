@@ -1,0 +1,43 @@
+<h3>Transaction Detail</h3>
+
+<h4>UID</h4>
+<p>{{transaction.uid}}</p>
+
+<h4>Inputs</h4>
+
+<ul class="inputs">
+  <li ng-repeat="input in transaction.inputs">
+    <p><label>UXTO Transaction UID</label> {{input.transactionUid}}</p>
+    <p><label>UXTO Output Index</label> {{input.outputIndex}}</p>
+    <p><label>Script</label> {{input.script}}</p>
+    <p><label>Script (hex)</label> {{input.scriptHex}}</p>
+  </li>
+</ul>
+
+<p ng-hide="transaction.inputs.length">none</p>
+
+
+<h4>Outputs</h4>
+
+<ol class="outputs">
+  <li ng-repeat="output in transaction.outputs">
+    <p><label>Asset Type</label> {{output.assetType}}</p>
+    <p ng-if="output.value"><label>Value</label> {{output.value}}</p>
+    <p ng-if="output.asset"><label>Asset</label> {{output.asset}}</p>
+    <p><label>Script</label> {{output.script}}</p>
+    <p><label>Script (hex)</label> {{output.scriptHex}}</p>
+  </li>
+</ol>
+
+<p ng-hide="transaction.outputs.length">none</p>
+
+<h4>Raw (hex)</h4>
+
+<div class="raw-transaction" style="font-family: Courier">
+  <p ng-repeat="row in rawRows track by $index">
+    <span class="word" ng-repeat="word in row track by $index">
+      <span class="byte" ng-repeat="byte in word track by $index">{{byte}}&nbsp;</span>
+      &nbsp;
+    </span>
+  </p>
+</div>

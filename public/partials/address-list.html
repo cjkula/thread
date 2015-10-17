@@ -1,0 +1,11 @@
+<h3>Key Stash</h3>
+
+<ul class="addresses">
+  <li ng-repeat="address in addresses track by address.base58">
+    <a href="#/addresses/{{address.base58}}">{{address.base58}}</a>
+  </li>
+</ul>
+
+<form data-ng-submit="generateAddress()">
+  <input type="submit" value="Generate" />
+</form>

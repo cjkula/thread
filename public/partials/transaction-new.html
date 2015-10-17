@@ -1,0 +1,40 @@
+<form action="#" ng-controller="NewTransactionFormCtrl" ng-submit="submitForm()">
+
+    <h3>Input</h3>
+
+    <p><label>UTXO Transaction UID</label></br>
+    <input type="text" ng-model="transaction.input.transactionUid"></p>
+
+    <p><label>UTXO Output Index</label></br>
+    <input type="text" ng-model="transaction.input.outputIndex"></p>
+
+    <p><label>Unlocking Script (hex)</label></br>
+    <input type="text" ng-model="transaction.input.script"></p>
+
+    <br>
+
+    <h3>Output</h3>
+
+    <p><label>Output Asset Type</label></br>
+    <input type="text" ng-model="transaction.output.assetType"></p>
+
+    <p><label>Output Value</label></br>
+    <input type="text" ng-model="transaction.output.value"></p>
+
+    <p><label>Output Asset</label></br>
+    <input type="text" ng-model="transaction.output.asset"></p>
+
+    <p><label>Encumbering Script (hex)</label></br>
+    <input type="text" ng-model="transaction.output.script"></p>
+
+    <br/>
+
+    <input type="submit">
+
+<pre>
+    {{ transaction }}
+</pre>
+
+</form>
+
+
