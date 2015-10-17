@@ -1,7 +1,10 @@
-require File.join(File.dirname(__FILE__), '../app.rb')
-
+require 'sinatra'
 require 'rack/test'
 require 'database_cleaner'
+
+set :environment, :test
+
+require File.join(File.dirname(__FILE__), '../app.rb')
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods

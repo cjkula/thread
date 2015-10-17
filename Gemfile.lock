@@ -48,6 +48,8 @@ GEM
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
     sass (3.4.19)
+    shotgun (0.9.1)
+      rack (>= 1.0)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -69,6 +71,7 @@ DEPENDENCIES
   rspec
   rspec-mocks
   sass
+  shotgun
   sinatra
 
 BUNDLED WITH

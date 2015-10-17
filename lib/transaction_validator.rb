@@ -5,7 +5,7 @@ class TransactionValidator
   end
 
   def valid?
-    false
+    true
   end
 
 end

@@ -30,12 +30,52 @@ def parse_asset_info(obj)
   obj
 end
 
+def transaction_to_json(transaction)
+  inputs = transaction.inputs.map do |input|
+    {
+      transactionUid: bytes_to_hex(input.transaction_uid),
+      outputIndex:    input.output_index,
+      script:         input.script.humanize,
+      scriptHex:      bytes_to_hex(input.script.serialize)
+    }
+  end
+
+  outputs = transaction.outputs.map do |output|
+    {
+      assetType: output.asset_type,
+      value:     output.value,
+      asset:     output.asset ? bytes_to_hex(output.asset) : nil,
+      script:    output.script.humanize,
+      scriptHex: bytes_to_hex(output.script.serialize)
+    }
+  end
+
+  {
+    uid:     transaction.uid,
+    inputs:  inputs,
+    outputs: outputs,
+    raw:     bytes_to_hex(transaction.serialize)
+  }.to_json
+end
+
+get '/api/transactions.json' do
+  content_type :json
+  Transaction.all.map { |transaction| { uid: transaction.uid } }.to_json
+end
+
 get '/api/transactions/count' do
   content_type :json
   Transaction.count.to_json
 end
 
-post '/api/transactions' do
+get '/api/transactions/:uid.json' do
+  content_type :json
+  transaction = Transaction.first(uid: params[:uid])
+  transaction.deserialize
+  transaction_to_json(transaction)
+end
+
+post '/api/transactions.json' do
   content_type :json
   transaction = Transaction.new
 
@@ -47,7 +87,13 @@ post '/api/transactions' do
     transaction.outputs << Output.new(parse_script(integerize([:value, :asset_type], parse_asset_info(output))))
   end
 
-  transaction.validate
-  transaction.save
-  transaction.uid
+  begin
+    transaction.validate
+    transaction.save
+    transaction_to_json(transaction)
+  rescue StandardError => e
+    status 400
+    { error: e.class.to_s }.to_json
+  end
+
 end

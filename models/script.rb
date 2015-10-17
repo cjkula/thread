@@ -71,6 +71,22 @@ class Script < Array
     input[(len + 2)..-1]
   end
 
+  def humanize
+    map { |step| step_to_human_readable(step) }.join(' ')
+  end
+
+  def dehumanize
+
+  end
+
+  def step_to_human_readable(data)
+    if (OP_CODES.has_key?(data))
+      data.to_s.upcase
+    else
+      bytes_to_hex(data).upcase
+    end
+  end
+
   def step_to_bytes(data)
     if (op = OP_CODES[data])
       op.chr
