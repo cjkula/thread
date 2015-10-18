@@ -1,13 +1,13 @@
-var spoolControllers = angular.module('spoolControllers', []);
+var explorerControllers = angular.module('explorerControllers', []);
 
-spoolControllers.controller('NavigationCtrl', ['$scope', '$location',
-  function ($scope, $location) {
-    $scope.isCurrentPath = function (path) {
-      return $location.path() == path;
+explorerControllers.controller('NavigationCtrl', ['$scope', '$location',
+  function($scope, $location) {
+    $scope.isCurrentPath = function(path) {
+      return $location.path().indexOf(path) === 0;
     };
   }]);
 
-spoolControllers.controller('TransactionListCtrl', ['$scope', '$http',
+explorerControllers.controller('TransactionListCtrl', ['$scope', '$http',
   function($scope, $http) {
     $http.get('/api/transactions.json').success(function(data) {
       $scope.transactions = data;
@@ -16,7 +16,7 @@ spoolControllers.controller('TransactionListCtrl', ['$scope', '$http',
     $scope.orderProp = 'uid';
   }]);
 
-spoolControllers.controller('TransactionDetailCtrl', ['$scope', '$routeParams', '$http',
+explorerControllers.controller('TransactionDetailCtrl', ['$scope', '$routeParams', '$http',
   function($scope, $routeParams, $http) {
     function splitInto(chunkSize, string) {
       return string.match(new RegExp('.{1,' + chunkSize + '}', 'g'));
@@ -29,7 +29,7 @@ spoolControllers.controller('TransactionDetailCtrl', ['$scope', '$routeParams', 
     });
   }]);
 
-spoolControllers.controller('NewTransactionFormCtrl', ['$scope', '$http', '$location',
+explorerControllers.controller('NewTransactionFormCtrl', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
     $scope.transaction = {
       input: {},
@@ -42,28 +42,28 @@ spoolControllers.controller('NewTransactionFormCtrl', ['$scope', '$http', '$loca
     };
   }]);
 
-function getAddresses() {
-  var addresses = localStorage.getItem('thread_stash_addresses');
-  return addresses ? JSON.parse(addresses) : [];
+function getKeys() {
+  var keys = localStorage.getItem('thread_stash_keys');
+  return keys ? JSON.parse(keys) : [];
 }
 
-function getAddressByBase58(base58) {
-  return _.find(getAddresses(), { 'base58': base58 });
+function getKeyByBase58(base58) {
+  return _.find(getKeys(), { 'base58': base58 });
 }
 
-spoolControllers.controller('AddressListCtrl', ['$scope', '$http',
+explorerControllers.controller('KeyListCtrl', ['$scope', '$http',
   function($scope, $http) {
-    $scope.addresses = getAddresses();
+    $scope.keys = getKeys();
 
-    $scope.generateAddress = function() {
+    $scope.generateKey = function() {
       $http.get('/api/addresses/generate.json').success(function(data) {
-        $scope.addresses.push(data);
-        localStorage.setItem('thread_stash_addresses', JSON.stringify($scope.addresses));
+        $scope.keys.push(data);
+        localStorage.setItem('thread_stash_keys', JSON.stringify($scope.keys));
       });
     };
   }]);
 
-spoolControllers.controller('AddressDetailCtrl', ['$scope', '$routeParams',
+explorerControllers.controller('KeyDetailCtrl', ['$scope', '$routeParams',
   function($scope, $routeParams) {
-    $scope.address = getAddressByBase58($routeParams.base58);
+    $scope.key = getKeyByBase58($routeParams.base58);
   }]);

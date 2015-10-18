@@ -1,3 +1,3 @@
-get '/' do
-  erb :index
+get '/explorer' do
+  erb :explorer
 end

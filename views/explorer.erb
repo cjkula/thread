@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="en" ng-app="spoolApp">
+<html lang="en" ng-app="explorerApp">
 <head>
     <meta charset="utf-8">
-    <title>Spool</title>
+    <title>Thread Explorer</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="stylesheets/app.css">
     <script src="js/angular.js"></script>
     <script src="js/angular-route.js"></script>
     <script src="js/lodash.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/controllers.js"></script>
+    <script src="js/explorer/controllers.js"></script>
+    <script src="js/explorer/app.js"></script>
 </head>
 <body>
 
@@ -19,12 +19,11 @@
       <nav class="navbar navbar-default" ng-controller="NavigationCtrl">
         <div class="container-fluid">
           <div class="navbar-header">
-            <a class="navbar-brand" href="#/">Spool</a>
+            <a class="navbar-brand" href="#/">Thread Explorer</a>
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li ng-class="{ active: isCurrentPath('/') }"><a href="#/">Welcome</a></li>
-              <li ng-class="{ active: isCurrentPath('/addresses') }"><a href="#/addresses">Addresses</a></li>
+              <li ng-class="{ active: isCurrentPath('/keys') }"><a href="#/keys">Keys</a></li>
               <li ng-class="{ active: isCurrentPath('/transactions') }"><a href="#/transactions">Transactions</a></li>
               <li><a href="#/">Blocks</a></li>
             </ul>
