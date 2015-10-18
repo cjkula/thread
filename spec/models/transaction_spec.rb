@@ -10,8 +10,8 @@ describe Transaction do
   end
 
   describe "when valid" do
-    before do
-      allow_any_instance_of(TransactionValidator).to receive(:valid?).and_return(true)
+    before(:each) do
+      allow_any_instance_of(TransactionValidator).to receive(:validate).and_return(nil)
     end
 
     it "can be saved and retrieved" do
@@ -63,20 +63,24 @@ describe Transaction do
         expect { @transaction.valid? }.to raise_error(Transaction::NotValidated)
       end
       it "should report a valid state" do
-        allow_any_instance_of(TransactionValidator).to receive(:valid?).and_return(true)
+        allow_any_instance_of(TransactionValidator).to receive(:validate)
         @transaction.validate
         expect(@transaction.valid?).to eq(true)
       end
       it "should report an invalid state" do
-        allow_any_instance_of(TransactionValidator).to receive(:valid?).and_return(false)
-        @transaction.validate
+        allow_any_instance_of(TransactionValidator).to receive(:validate).and_raise(StandardError)
+        begin
+          @transaction.validate
+        rescue StandardError
+        end
         expect(@transaction.valid?).to eq(false)
+        expect(@transaction.validated?).to eq(true)
       end
     end
 
     describe "#serialize" do
       it "accepts a transaction with one input and one output" do
-        prev_transaction_uid = Digest::SHA256.digest('fake_transaction')
+        prev_transaction_uid = Transaction.new.calculate_uid('fake_transaction')
         input = Input.new(transaction_uid: prev_transaction_uid, output_index: 1, script: Script.new(['xyz']))
         output = Output.new(value: 1, script: Script.new(['ZYX']))
         transaction = Transaction.new(inputs: [input], outputs: [output])
@@ -84,8 +88,8 @@ describe Transaction do
                                                           '0001' + '00000001' + '000403' + bytes_to_hex('ZYX'))
       end
       it "accepts a transaction with multiple inputs and outputs" do
-        prev_transaction_uid1 = Digest::SHA256.digest('fake_id1')
-        prev_transaction_uid2 = Digest::SHA256.digest('fake_id2')
+        prev_transaction_uid1 = Transaction.new.calculate_uid('fake_transaction1')
+        prev_transaction_uid2 = Transaction.new.calculate_uid('fake_transaction1')
         input1 = Input.new(transaction_uid: prev_transaction_uid1, output_index: 1, script: Script.new([hex_to_bytes('1111')]))
         input2 = Input.new(transaction_uid: prev_transaction_uid2, output_index: 2, script: Script.new([hex_to_bytes('2222')]))
         output1 = Output.new(value: 10, script: Script.new(['aa']))

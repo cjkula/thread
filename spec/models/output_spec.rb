@@ -39,7 +39,7 @@ describe Output do
     end
     it "should raise an error if the SHA256 data is not the correct length" do
       output = Output.new(asset_type: Output::SHA256_ASSET_TYPE, asset: Digest::SHA256.base64digest('document')[0..7], script: Script.new)
-      expect { output.serialize }.to raise_error(Output::InvalidAssetLength)
+      expect { output.serialize }.to raise_error(Output::InvalidAsset)
     end
     it "should raise an error if the asset type is not specified" do
       output = Output.new(asset_type: nil, asset: Digest::SHA256.base64digest('document'), script: Script.new)

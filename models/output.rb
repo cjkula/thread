@@ -6,9 +6,13 @@ class Output
   attr_accessor :asset_type, :value, :asset, :script
 
   class MissingAssetType < StandardError; end
-  class MissingValue < StandardError; end
-  class MissingAsset < StandardError; end
   class InvalidAssetType < StandardError; end
+  class AssetInValueTransaction < StandardError; end
+  class ValueInAssetTransaction < StandardError; end
+  class MissingValue < StandardError; end
+  class InvalidValue < StandardError; end
+  class MissingAsset < StandardError; end
+  class InvalidAsset < StandardError; end
   class UnsupportedAssetType < StandardError; end
   class InvalidAssetLength < StandardError; end
   class MissingScript < StandardError; end
@@ -32,7 +36,7 @@ class Output
       serialize_value_or_type(value) + script.serialize
     when SHA256_ASSET_TYPE
       raise MissingAsset unless asset
-      raise InvalidAssetLength unless asset.length == 32 # length of a SHA256 hash
+      raise InvalidAsset unless asset.length == 32 # length of a SHA256 hash
       serialize_value_or_type(asset_type) + asset + script.serialize
     when nil
       raise MissingAssetType
@@ -64,6 +68,26 @@ class Output
 
     self.script = Script.new
     self.script.deserialize(data[script_offset..-1]) # returns string remaining
+  end
+
+  def validate
+    case asset_type
+    when VALUE_ASSET_TYPE
+      raise MissingValue unless value
+      raise InvalidValue unless value.is_a?(Integer) && output.value > 0
+      raise AssetInValueTransaction if asset
+    when SHA256_ASSET_TYPE
+      ValueInAssetTransaction
+      raise MissingAsset unless asset
+      raise InvalidAsset unless asset.length == 32
+      raise ValueInAssetTransaction if value
+    when nil
+      raise MissingAssetType
+    else
+      raise UnsupportedAssetType
+    end
+    raise MissingScript unless script
+    script.validate
   end
 
 end

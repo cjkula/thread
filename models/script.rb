@@ -75,16 +75,21 @@ class Script < Array
     map { |step| step_to_human_readable(step) }.join(' ')
   end
 
-  def dehumanize
-
-  end
-
   def step_to_human_readable(data)
     if (OP_CODES.has_key?(data))
       data.to_s.upcase
     else
       bytes_to_hex(data).upcase
     end
+  end
+
+  def self.import_human_readable(string)
+    Script.new string.split(/\s+/).map { |s| import_step(s) }
+  end
+
+  def self.import_step(string)
+    op = string.downcase.to_sym
+    OP_CODES.has_key?(op) ? op : hex_to_bytes(string)
   end
 
   def step_to_bytes(data)
@@ -98,4 +103,9 @@ class Script < Array
       raise InvalidScriptData
     end
   end
+
+  def validate
+
+  end
+
 end

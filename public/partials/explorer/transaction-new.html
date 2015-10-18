@@ -27,13 +27,12 @@
     <p><label>Encumbering Script (hex)</label></br>
     <input type="text" ng-model="transaction.output.script"></p>
 
-    <br/>
+    <br>
+    <input type="submit" style="float:left;margin-right:20px">
 
-    <input type="submit">
+    <div class="error" ng-if="error.length" style="color:red;padding-top:2px">Submission usuccessful: &lt;{{error}}&gt;</div>
 
-<pre>
-    {{ transaction }}
-</pre>
+    <!-- <pre>{{ transaction }}</pre> -->
 
 </form>
 

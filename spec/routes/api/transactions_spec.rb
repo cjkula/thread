@@ -5,7 +5,7 @@ include Conversions
 describe '/api/transactions' do
   describe 'GET' do
     it "should return a list of transaction uids" do
-      allow_any_instance_of(TransactionValidator).to receive(:valid?).and_return(true)
+      allow_any_instance_of(TransactionValidator).to receive(:validate)
       t1 = Transaction.new; t1.validate; t1.save
       t2 = Transaction.new; t2.validate; t2.save
       get '/api/transactions.json'
@@ -15,7 +15,7 @@ describe '/api/transactions' do
 
   describe 'GET count' do
     it "should return the number of transactions in the database" do
-      allow_any_instance_of(TransactionValidator).to receive(:valid?).and_return(true)
+      allow_any_instance_of(TransactionValidator).to receive(:validate)
       t1 = Transaction.new; t1.validate; t1.save
       t2 = Transaction.new; t2.validate; t2.save
 
@@ -30,7 +30,7 @@ describe '/api/transactions' do
       input = Input.new(transaction_uid: prev_transaction_uid, output_index: 1, script: Script.new(['xyz']))
       output = Output.new(value: 1, script: Script.new(['ZYX']))
       transaction = Transaction.new(inputs: [input], outputs: [output])
-      allow_any_instance_of(TransactionValidator).to receive(:valid?).and_return(true)
+      allow_any_instance_of(TransactionValidator).to receive(:validate)
       transaction.validate
       transaction.save
 
@@ -45,7 +45,7 @@ describe '/api/transactions' do
 
   describe "POST" do
     def transaction_post_and_fetch(params)
-      post '/api/transactions.json', params
+      post '/api/transactions.json', params.to_json
       expect(last_response).to be_ok
       transaction = nil
       10.times do
@@ -59,11 +59,11 @@ describe '/api/transactions' do
 
     context "with valid params" do
       before do
-        allow_any_instance_of(TransactionValidator).to receive(:valid?).and_return(true)
+        allow_any_instance_of(TransactionValidator).to receive(:validate)
       end
 
       it "should return the transaction" do
-        post '/api/transactions.json', {}
+        post '/api/transactions.json', {}.to_json
         transaction = Transaction.last
         expect(last_response.body).to eq({ uid: transaction.uid, inputs: [], outputs: [], raw: '00000000' }.to_json)
       end
@@ -73,8 +73,7 @@ describe '/api/transactions' do
         expect(t.outputs).to eq([])
       end
       it "should create a transaction with a value output" do
-        script_bytes = Script.new([:op_dup]).serialize
-        t = transaction_post_and_fetch(outputs: [{ value: 100, script: bytes_to_hex(script_bytes) }])
+        t = transaction_post_and_fetch(outputs: [{ value: 100, script: Script.new([:op_dup]).humanize }])
         expect(t.inputs).to eq([])
         expect(t.outputs.length).to eq(1)
         output = t.outputs[0]
@@ -84,9 +83,8 @@ describe '/api/transactions' do
         expect(output.script).to eq([:op_dup])
       end
       it "should create a transaction with an asset output" do
-        script_bytes = Script.new([:op_verify]).serialize
         asset = sha256('something')
-        t = transaction_post_and_fetch(outputs: [{ asset_type: 'SHA256', asset: bytes_to_hex(asset), script: bytes_to_hex(script_bytes) }])
+        t = transaction_post_and_fetch(outputs: [{ assetType: 'SHA256', asset: bytes_to_hex(asset), script: Script.new([:op_verify]).humanize }])
         expect(t.inputs).to eq([])
         expect(t.outputs.length).to eq(1)
         output = t.outputs[0]
@@ -96,9 +94,8 @@ describe '/api/transactions' do
         expect(output.script).to eq([:op_verify])
       end
       it "should create a transaction with an input" do
-        script_bytes = Script.new(['XYZPDQ']).serialize
         prev_transaction_uid = Transaction.new.calculate_uid('fake_content')
-        t = transaction_post_and_fetch(inputs: [{ transaction_uid: prev_transaction_uid, output_index: 1, script: bytes_to_hex(script_bytes) }])
+        t = transaction_post_and_fetch(inputs: [{ transactionUid: bytes_to_hex(prev_transaction_uid), outputIndex: 1, script: Script.new(['XYZPDQ']).humanize }])
         expect(t.inputs.length).to eq(1)
         input = t.inputs[0]
         expect(input.transaction_uid).to eq(prev_transaction_uid)
@@ -109,22 +106,22 @@ describe '/api/transactions' do
       it "should create a transaction with multiple inputs and outputs" do
         uid1 = Transaction.new.calculate_uid('fake_content')
         uid2 = Transaction.new.calculate_uid('more_fake_content')
-        script1_hex = bytes_to_hex(Script.new(['test1']).serialize)
-        script2_hex = bytes_to_hex(Script.new(['test2']).serialize)
-        script3_hex = bytes_to_hex(Script.new(['test3']).serialize)
-        script4_hex = bytes_to_hex(Script.new(['test4']).serialize)
+        script1 = Script.new(['test1'])
+        script2 = Script.new(['test2'])
+        script3 = Script.new(['test3'])
+        script4 = Script.new(['test4'])
         asset = sha256('something')
 
         params = {
           inputs: [
-            { transaction_uid: uid1, output_index: 10, script: script1_hex },
-            { transaction_uid: uid2, output_index: 3, script: script2_hex }
+            { transactionUid: bytes_to_hex(uid1), outputIndex: 10, script: script1.humanize },
+            { transactionUid: bytes_to_hex(uid2), outputIndex: 3, script: script2.humanize }
           ],
           outputs: [
             # weird things happen if :value is not nil'd here -- the :value => 12 from
             # the subsequent hash somehow gets moved to this one when params are parsed
-            { value: nil, asset_type: 'SHA256', asset: bytes_to_hex(asset), script: script3_hex },
-            { value: 12, script: script4_hex }
+            { value: nil, assetType: 'SHA256', asset: bytes_to_hex(asset), script: script3.humanize },
+            { value: 12, script: script4.humanize }
           ]
         }
 
@@ -132,17 +129,17 @@ describe '/api/transactions' do
 
         expect(t.inputs.length).to eq(2)
         expect(t.outputs.length).to eq(2)
-        expect(bytes_to_hex(t.inputs[0].serialize)).to eq(bytes_to_hex(uid1) + '000a' + script1_hex)
-        expect(bytes_to_hex(t.inputs[1].serialize)).to eq(bytes_to_hex(uid2) + '0003' + script2_hex)
-        expect(bytes_to_hex(t.outputs[0].serialize)).to eq(hex8(Output::SHA256_ASSET_TYPE) + bytes_to_hex(asset) + script3_hex)
-        expect(bytes_to_hex(t.outputs[1].serialize)).to eq(hex8(12) + script4_hex)
+        expect(bytes_to_hex(t.inputs[0].serialize)).to eq(bytes_to_hex(uid1) + '000a' + bytes_to_hex(script1.serialize))
+        expect(bytes_to_hex(t.inputs[1].serialize)).to eq(bytes_to_hex(uid2) + '0003' + bytes_to_hex(script2.serialize))
+        expect(bytes_to_hex(t.outputs[0].serialize)).to eq(hex8(Output::SHA256_ASSET_TYPE) + bytes_to_hex(asset) + bytes_to_hex(script3.serialize))
+        expect(bytes_to_hex(t.outputs[1].serialize)).to eq(hex8(12) + bytes_to_hex(script4.serialize))
       end
     end
 
     context "with invalid params" do
       it "should return the error information" do
-        allow_any_instance_of(TransactionValidator).to receive(:valid?).and_raise(Input::MissingScript)
-        post '/api/transactions.json', {}
+        allow_any_instance_of(TransactionValidator).to receive(:validate).and_raise(Input::MissingScript)
+        post '/api/transactions.json', {}.to_json
         expect(last_response.status).to eq(400)
         expect(JSON.parse(last_response.body)['error']).to eq('Input::MissingScript')
       end

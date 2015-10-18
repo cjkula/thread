@@ -23,6 +23,7 @@ class Transaction
   end
 
   def save
+    raise NotValidated unless validated?
     raise Invalid unless valid?
 
     bytes = serialize
@@ -32,11 +33,16 @@ class Transaction
   end
 
   def validate
-    @valid = TransactionValidator.new(self).valid?
+    TransactionValidator.new(self).validate
+    @validated = @valid = true
+  rescue StandardError => e
+    @valid = false
+    @validated = true
+    raise e
   end
 
   def validated?
-    !@valid.nil?
+    !!@validated
   end
 
   def valid?

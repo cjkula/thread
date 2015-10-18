@@ -23,11 +23,11 @@ describe Input do
     end
     it "should raise an error if the transaction_uid is not specified" do
       input = Input.new(output_index: 1, script: Script.new)
-      expect { input.serialize }.to raise_error(Input::MissingTransaction)
+      expect { input.serialize }.to raise_error(Input::MissingUTXO)
     end
     it "should raise an error if the output_index is not specified" do
       input = Input.new(transaction_uid: Digest::SHA256.base64digest('fake_id'), script: Script.new)
-      expect { input.serialize }.to raise_error(Input::MissingTransaction)
+      expect { input.serialize }.to raise_error(Input::MissingOutputIndex)
     end
     it "should raise an error if there is no script" do
       input = Input.new(transaction_uid: Digest::SHA256.base64digest('fake_id'), output_index: 1)

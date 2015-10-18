@@ -1,33 +1,18 @@
 require 'json'
 
-def integerize(fields, obj)
-  fields.each do |field|
-    if (value = obj.delete(field.to_s))
-      obj[field.to_s] = value.to_i
-    end
-  end
-  obj
+def integerize(value)
+  value ? value.to_i : nil
 end
 
-def parse_script(obj)
-  if (bytes = obj.delete('script'))
-    script = Script.new
-    script.deserialize(hex_to_bytes(bytes))
-    obj["script"] = script
+def parse_asset_type(asset_type)
+  case asset_type.downcase
+  when /\A\d+\z/
+    asset_type.to_i
+  when 'value'
+    Output::VALUE_ASSET_TYPE
+  when 'sha256'
+    Output::SHA256_ASSET_TYPE
   end
-  obj
-end
-
-def parse_asset_info(obj)
-  if (asset_type = obj.delete('asset_type'))
-    if asset_type.downcase == 'sha256'
-      obj['asset_type'] = Output::SHA256_ASSET_TYPE
-      if (asset = obj.delete('asset'))
-        obj['asset'] = hex_to_bytes(asset)
-      end
-    end
-  end
-  obj
 end
 
 def transaction_to_json(transaction)
@@ -77,14 +62,20 @@ end
 
 post '/api/transactions.json' do
   content_type :json
+  tx_params = JSON.parse(request.body.read)
+
   transaction = Transaction.new
 
-  (params[:inputs] || []).each do |input|
-    transaction.inputs << Input.new(parse_script(integerize([:output_index], input)))
+  transaction.inputs = (tx_params['inputs'] || []).map do |attrs|
+    Input.new transaction_uid: hex_to_bytes(attrs['transactionUid']),
+              output_index:    integerize(attrs['outputIndex']),
+              script:          Script.import_human_readable(attrs['script'])
   end
-
-  (params[:outputs] || []).each do |output|
-    transaction.outputs << Output.new(parse_script(integerize([:value, :asset_type], parse_asset_info(output))))
+  transaction.outputs = (tx_params['outputs'] || []).map do |attrs|
+    Output.new asset_type:      attrs['assetType'] ? parse_asset_type(attrs['assetType']) : nil,
+               value:           integerize(attrs['value']),
+               asset:           attrs['asset'] ? hex_to_bytes(attrs['asset']) : nil,
+               script:          Script.import_human_readable(attrs['script'])
   end
 
   begin

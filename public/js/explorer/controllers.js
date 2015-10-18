@@ -31,13 +31,14 @@ explorerControllers.controller('TransactionDetailCtrl', ['$scope', '$routeParams
 
 explorerControllers.controller('NewTransactionFormCtrl', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
-    $scope.transaction = {
-      input: {},
-      output: {}
-    };
+    $scope.transaction = { input: {}, output: {} };
     $scope.submitForm = function() {
-      $http.post('/api/transactions.json', $scope.transaction).then(function(response) {
+      var tx = { inputs: [$scope.transaction.input], outputs: [$scope.transaction.output] };
+      $scope.error = "";
+      $http.post('/api/transactions.json', tx).then(function(response) {
         $location.path('/transactions/' + response.data.uid);
+      }, function(response) {
+        $scope.error = response.data.error;
       });
     };
   }]);
