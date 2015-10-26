@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" ng-app="spoolApp">
+<head>
+    <meta charset="utf-8">
+    <title>Spool</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="stylesheets/app.css">
+    <script src="js/angular.js"></script>
+    <script src="js/angular-route.js"></script>
+    <script src="js/lodash.js"></script>
+    <script src="js/spool/controllers.js"></script>
+</head>
+
+<body ng-controller="UserCtrl">
+
+    <div class="container">
+
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#/">Spool</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav" style="float:right">
+              <li><a href="#" ng-click="login()" ng-if="!user">Log In</a></li>
+              <li><a href="#" ng-click="logout()" ng-if="user">Log Out</a></li>
+              <li><a href="/explorer">Thread Explorer</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+
+      <div class="content">
+        <div class="user-info" ng-if="user">
+          <p class="handle">{{ user.handle }}</p>
+          <p class="full-name">{{ user.fullName }}</p>
+          <p class="description">{{ user.description }}</p>
+        </div>
+        <div class="" ng-controller="PostCtrl">
+          <form action="#" class="new-post">
+            <textarea cols="60" rows="3" style="resize:none" ng-model="text" ng-enter="submitForm()"></textarea>
+          </form>
+          <ul class="posts">
+            <li class="post" ng-repeat="post in posts">
+              <p class="author" style="float:left">{{ post.author.handle }}</p>
+              <p class="timestamp" style="float:right">{{ formatTime(post.timestamp) }}</p>
+              <div class="post" style="clear:both">{{ post.text }}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div> <!-- /container -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
