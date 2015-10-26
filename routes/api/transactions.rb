@@ -84,7 +84,11 @@ post '/api/transactions.json' do
     transaction_to_json(transaction)
   rescue StandardError => e
     status 400
-    { error: e.class.to_s }.to_json
+    error = { error: e.class.to_s }
+    if [:development, :test].include?(settings.environment)
+      error.merge!(message: e.message, backtrace: [e.backtrace[0]] + e.backtrace[1..-1].select { |line| line =~ /thread/})
+    end
+    error.to_json
   end
 
 end
