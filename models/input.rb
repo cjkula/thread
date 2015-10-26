@@ -35,7 +35,7 @@ class Input
     raise MissingUTXO unless transaction_uid
     raise InvalidUTXO unless transaction_uid.length == 20
     raise MissingOutputIndex unless output_index
-    raise InvalidOutputIndex unless output_index.is_a?(Integer) && input.output_index >= 0
+    raise InvalidOutputIndex unless output_index.is_a?(Integer) && output_index >= 0
     raise MissingScript unless script
     script.validate
   end
