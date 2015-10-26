@@ -40,4 +40,10 @@ describe Conversions do
       expect(encode_base58(pk_hash_hex)).to eq('16UwLL9Risc3QfPqBUvKofHmBQ7wMtjvM')
     end
   end
+  describe "#decode_base58" do
+    it "should convert a base58 value to hex" do
+      pk_hash_hex = '00010966776006953D5567439E5E39F86A0D273BEED61967F6'
+      expect(decode_base58('16UwLL9Risc3QfPqBUvKofHmBQ7wMtjvM')).to eq(pk_hash_hex)
+    end
+  end
 end
