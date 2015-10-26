@@ -19,8 +19,6 @@ class Script < Array
     op_checksig:       0xac,
     op_checksigverify: 0xad
   }
-
-  # CODE_OPS = OP_CODES.keys.reduce({}) { |h, key| h[OP_CODES[key].to_i(16)] = key; h }
   CODE_OPS = OP_CODES.invert
 
   def run(vm)
