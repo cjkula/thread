@@ -1,0 +1,9 @@
+<h3>Blocks</h3>
+
+<ul class="blocks">
+  <li ng-repeat="block in blocks">
+    <a href="#/blocks/{{block.uid}}">{{block.uid}}</a>
+  </li>
+</ul>
+
+<p ng-hide="blocks.length">none</p>

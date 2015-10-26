@@ -1,4 +1,4 @@
-<h3>Key Stash</h3>
+<h3>Keys</h3>
 
 <p>Locally-stored key blockchain key collection</p>
 
@@ -7,6 +7,8 @@
     <a href="#/keys/{{key.base58}}">{{key.base58}}</a>
   </p>
 </div>
+
+<p ng-hide="keys.length">none</p>
 
 <form data-ng-submit="generateKey()">
   <input type="submit" value="Generate Another Key" class="btn btn-default" />

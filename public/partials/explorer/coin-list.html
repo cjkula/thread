@@ -1,0 +1,12 @@
+<h3>Coins</h3>
+
+<ul class="outputs">
+  <li ng-repeat="output in outputs">
+    <a href="#/transactions/{{output.transactionUid}}">{{output.value}}</a>
+  </li>
+</ul>
+
+<p ng-hide="outputs.length">none</p>
+
+<p><b>Total:</b> {{sum}}</p>
+

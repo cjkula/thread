@@ -33,7 +33,12 @@ explorerControllers.controller('NewTransactionFormCtrl', ['$scope', '$http', '$l
   function($scope, $http, $location) {
     $scope.transaction = { input: {}, output: {} };
     $scope.submitForm = function() {
-      var tx = { inputs: [$scope.transaction.input], outputs: [$scope.transaction.output] };
+      var inputs = $scope.transaction.input.transactionUid ? [$scope.transaction.input] : [],
+          outputs = $scope.transaction.output.script ? [$scope.transaction.output] : [],
+          tx = {
+            inputs: inputs,
+            outputs: outputs
+          };
       $scope.error = "";
       $http.post('/api/transactions.json', tx).then(function(response) {
         $location.path('/transactions/' + response.data.uid);
@@ -41,6 +46,29 @@ explorerControllers.controller('NewTransactionFormCtrl', ['$scope', '$http', '$l
         $scope.error = response.data.error;
       });
     };
+  }]);
+
+explorerControllers.controller('CoinListCtrl', ['$scope', '$http',
+  function($scope, $http) {
+    $http.get('/api/values.json').success(function(data) {
+      $scope.outputs = data;
+      $scope.sum = _.sum(data, 'value');
+    });
+  }]);
+
+explorerControllers.controller('AssetListCtrl', ['$scope', '$http',
+  function($scope, $http) {
+    $http.get('/api/assets.json').success(function(data) {
+      $scope.outputs = data;
+    });
+  }]);
+
+explorerControllers.controller('BlockListCtrl', ['$scope', '$http',
+  function($scope, $http) {
+    $scope.blocks = [];
+    // $http.get('/api/blocks.json').success(function(data) {
+      // $scope.outputs = data;
+    // });
   }]);
 
 function getKeys() {

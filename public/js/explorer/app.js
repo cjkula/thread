@@ -6,6 +6,14 @@ explorerApp.config(['$routeProvider',
       when('/', {
         templateUrl: 'partials/explorer/welcome.html'
       }).
+      when('/keys', {
+        templateUrl: 'partials/explorer/key-list.html',
+        controller: 'KeyListCtrl'
+      }).
+      when('/keys/:base58', {
+        templateUrl: 'partials/explorer/key-detail.html',
+        controller: 'KeyDetailCtrl'
+      }).
       when('/transactions', {
         templateUrl: 'partials/explorer/transaction-list.html',
         controller: 'TransactionListCtrl'
@@ -17,13 +25,17 @@ explorerApp.config(['$routeProvider',
         templateUrl: 'partials/explorer/transaction-detail.html',
         controller: 'TransactionDetailCtrl'
       }).
-      when('/keys', {
-        templateUrl: 'partials/explorer/key-list.html',
-        controller: 'KeyListCtrl'
+      when('/coins', {
+        templateUrl: 'partials/explorer/coin-list.html',
+        controller: 'CoinListCtrl'
       }).
-      when('/keys/:base58', {
-        templateUrl: 'partials/explorer/key-detail.html',
-        controller: 'KeyDetailCtrl'
+      when('/assets', {
+        templateUrl: 'partials/explorer/asset-list.html',
+        controller: 'AssetListCtrl'
+      }).
+      when('/blocks', {
+        templateUrl: 'partials/explorer/block-list.html',
+        controller: 'BlockListCtrl'
       }).
       otherwise({
         redirectTo: '/'

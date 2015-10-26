@@ -25,7 +25,9 @@
             <ul class="nav navbar-nav">
               <li ng-class="{ active: isCurrentPath('/keys') }"><a href="#/keys">Keys</a></li>
               <li ng-class="{ active: isCurrentPath('/transactions') }"><a href="#/transactions">Transactions</a></li>
-              <li><a href="#/">Blocks</a></li>
+              <li ng-class="{ active: isCurrentPath('/coins') }"><a href="#/coins">Coins</a></li>
+              <li ng-class="{ active: isCurrentPath('/assets') }"><a href="#/assets">Assets</a></li>
+              <li ng-class="{ active: isCurrentPath('/blocks') }"><a href="#/blocks">Blocks</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
