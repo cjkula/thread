@@ -9,17 +9,17 @@ class Transaction
   key :uid, String
   key :blob, Binary
   key :published, Boolean
+  many :outputs
+  attr_accessor :inputs
 
-  attr_accessible :uid, :blob, :published
-
-  attr_accessor :inputs, :outputs
+  attr_accessible :uid, :blob, :published, :outputs, :inputs
 
   class Invalid < StandardError; end
   class NotValidated < StandardError; end
 
   def initialize(args = {})
     @inputs = args[:inputs] || []
-    @outputs = args[:outputs] || []
+    super
   end
 
   def save

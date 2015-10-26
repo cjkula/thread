@@ -19,12 +19,24 @@ describe Transaction do
       transaction.validate
       transaction.save
       uid = transaction.uid
-      transaction2 = Transaction.where(uid: uid).first
-      expect(transaction2.uid).to eq(uid)
+      transaction_fetch = Transaction.where(uid: uid).first
+      expect(transaction_fetch.uid).to eq(uid)
+    end
+
+    it "can retrieve a transaction by output asset" do
+      asset = sha256('data')
+      output = Output.new(asset_type: Output::SHA256_ASSET_TYPE, asset: BSON::Binary.new(asset), script: Script.new)
+      transaction = Transaction.new(outputs: [output])
+      transaction.validate
+      transaction.save
+      uid = transaction.uid
+      transaction_fetch = Transaction.where("outputs.asset" => BSON::Binary.new(asset)).first
+      expect(transaction_fetch.uid).to eq(uid)
     end
 
     it "can serialize a transaction to the db and restore it" do
-      transaction = Transaction.new( inputs: [], outputs: [ Output.new(value: 14, script: Script.new([:op_verify])) ] )
+      output = Output.new(value: 14, script: Script.new([:op_verify]))
+      transaction = Transaction.new( inputs: [], outputs: [output] )
       hex_transaction = '0000' + '0001' + '0000000e' + '000169'
       transaction.validate
       transaction.save

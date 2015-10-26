@@ -1,9 +1,19 @@
 require 'conversions'
 
 class Output
+  include MongoMapper::EmbeddedDocument
   include Conversions
 
-  attr_accessor :asset_type, :value, :asset, :script
+  key :asset_type, Integer
+  key :value, Integer
+  key :asset, Binary
+  key :spent_by_transaction_uid, String
+  key :script
+  attr_accessor :transaction_uid
+
+  attr_accessible :asset_type, :value, :asset, :script, :spent_by_transaction_uid
+
+  embedded_in :transaction
 
   class MissingAssetType < StandardError; end
   class InvalidAssetType < StandardError; end
@@ -22,10 +32,8 @@ class Output
   SHA256_ASSET_TYPE = 0xffffffff
 
   def initialize(args = {})
-    @value = args[:value]
-    @asset = args[:asset]
-    @asset_type = args[:asset_type] || (@value ? VALUE_ASSET_TYPE : nil)
-    @script = args[:script]
+    super
+    self.asset_type = VALUE_ASSET_TYPE if value && !asset_type
   end
 
   def serialize
@@ -37,7 +45,7 @@ class Output
     when SHA256_ASSET_TYPE
       raise MissingAsset unless asset
       raise InvalidAsset unless asset.length == 32 # length of a SHA256 hash
-      serialize_value_or_type(asset_type) + asset + script.serialize
+      serialize_value_or_type(asset_type) + asset.to_s + script.serialize
     when nil
       raise MissingAssetType
     else
@@ -74,12 +82,12 @@ class Output
     case asset_type
     when VALUE_ASSET_TYPE
       raise MissingValue unless value
-      raise InvalidValue unless value.is_a?(Integer) && output.value > 0
+      raise InvalidValue unless value.is_a?(Integer) && value > 0
       raise AssetInValueTransaction if asset
     when SHA256_ASSET_TYPE
       ValueInAssetTransaction
       raise MissingAsset unless asset
-      raise InvalidAsset unless asset.length == 32
+      raise InvalidAsset unless asset.to_s.length == 32
       raise ValueInAssetTransaction if value
     when nil
       raise MissingAssetType
