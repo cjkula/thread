@@ -30,8 +30,6 @@ def filtered_outputs(filter = {})
   if (addresses = filter[:addresses])
     hex_addresses = addresses.map { |a| decode_base58(a).downcase }
     all_outputs.select do |output|
-# puts hex_addresses.inspect
-# puts output.script.inspect
       (hex_addresses & output.script).length > 0
     end
   else
@@ -40,11 +38,7 @@ def filtered_outputs(filter = {})
 end
 
 def outputs_with(field_name, filters = {})
-  x = filtered_outputs(filters)
-puts x.inspect
-  y = x.select(&field_name)
-puts y.inspect
-  y
+  filtered_outputs(filters).select(&field_name)
 end
 
 def format_output(output)
