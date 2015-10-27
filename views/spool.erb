@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="en" ng-app="spoolApp">
 <head>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Spool</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="stylesheets/app.css">
@@ -15,8 +17,12 @@
 
     <div class="container">
 
+      <!-- Navbar Row -->
+      <div class="row">
+        <div class="col-sm-12" >
+
       <!-- Static navbar -->
-      <nav class="navbar navbar-default">
+      <nav class="navbar navbar-inverse">
         <div class="container-fluid">
           <div class="navbar-header">
             <a class="navbar-brand" href="#/">Spool</a>
@@ -30,26 +36,109 @@
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
       </nav>
+          </div>    <!-- col -->
+        </div>    <!-- row -->
 
-      <div class="content">
-        <div class="user-info" ng-if="user">
-          <p class="handle">{{ user.handle }}</p>
-          <p class="full-name">{{ user.fullName }}</p>
-          <p class="description">{{ user.description }}</p>
-        </div>
-        <div class="" ng-controller="PostCtrl">
-          <form action="#" class="new-post">
-            <textarea cols="60" rows="3" style="resize:none" ng-model="text" ng-enter="submitForm()"></textarea>
-          </form>
-          <ul class="posts">
-            <li class="post" ng-repeat="post in posts">
-              <p class="author" style="float:left">{{ post.author.handle }}</p>
-              <p class="timestamp" style="float:right">{{ formatTime(post.timestamp) }}</p>
-              <div class="post" style="clear:both">{{ post.text }}</div>
-            </li>
-          </ul>
-        </div>
-      </div>
+
+      <!-- Content Row -->
+      <div class="row">
+        <div class="content">
+        <!-- Sidebar Column -->
+        <div class="col-sm-3">
+
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h4 style="color: white ">User</h4>
+                </div>
+                <div class="panel-body">
+                  <div class="user-info" ng-if="user">
+                    <img class="center-block" ng-src="{{user.avatar}}">
+                    <table class="table">
+                      <tr>
+                        <td>Handle:</td>
+                        <td>{{ user.handle }}</td>
+                      </tr>
+                      <tr>
+                        <td>Full Name:</td>
+                        <td>{{ user.fullName }}</td>
+                      </tr>
+                      <tr>
+                        <td>Description:</td>
+                        <td>{{ user.description }}</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <a href="#" class="btn btn-success">See More</a>
+                </div>
+                </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h5 style="color: white ">Who to Follow:</h5>
+            </div>
+            <div class="panel-body">
+
+
+                <table class="table">
+                  <tr ng-repeat="user in identities">
+                    <td class="avatar"><img class="center-block" ng-src="{{user.avatar}}" height="40" width="40"></td>
+                    <td class="handle">{{ user.handle }}</td>
+                    <td>
+                      <button type="button" class="btn btn-success btn-sm">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Follow
+                      </button>
+                    </td>
+                  </tr>
+                </table>
+
+
+            </div>
+          </div>
+
+        </div> <!-- col -->
+
+          <div class="col-sm-9">
+            <div class="" ng-controller="PostCtrl">
+
+              <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                  <div class="well text-center">
+                    <h4>Add thread to spool:</h4>
+                    <form action="#" class="new-post">
+                      <textarea cols="60" rows="3" style="resize:none" ng-model="text" ng-enter="submitForm()"></textarea>
+                    </form>
+                  </div>
+                </div>
+                <div class="col-sm-2"></div>
+              </div>
+
+              <div class="col-cell">
+                <h3>Current Threads in Spool:</h3>
+                <br>
+              <table class="posts table table-striped">
+                <thead>
+                <tr>
+                  <th>Author</th>
+                  <th>Post</th>
+                  <th>Timestamp</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="post in posts">
+                  <td class="author"> {{ post.author.handle }} </td>
+                  <td class="post" style="clear:both"> {{ post.text }} </td>
+                  <td class="timestamp"> {{ formatTime(post.timestamp) }} </td>
+                </tr>
+                </tbody>
+              </table>
+              </div>
+
+            </div> <!-- PostCtrl -->
+          </div> <!-- col -->
+      </div> <!-- /content -->
+      </div> <!-- row -->
 
     </div> <!-- /container -->
 

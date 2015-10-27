@@ -18,13 +18,17 @@ spoolApp.controller('UserCtrl', ['$scope',
   function($scope) {
     $scope.bob = {
       handle: 'JoeBob1',
+        fullName: 'Joe Bob Briggs',
       description: 'King of all rewritable media',
-      rootAddress: '18XyNMz3oumDcHVqGgsiWei3DbKDWxv1C6'
+      rootAddress: '18XyNMz3oumDcHVqGgsiWei3DbKDWxv1C6',
+        avatar: 'avatars/joebob.jpg'
     };
     $scope.mary = {
       handle: 'MaryJane2',
+        fullName: 'Mary Jane Paul',
       description: 'Cleaning all the things since 2009',
-      rootAddress: '18dx6ij2cMk4VdwEN5Hb8LTMdefz9QP9xW'
+      rootAddress: '18dx6ij2cMk4VdwEN5Hb8LTMdefz9QP9xW',
+        avatar: 'avatars/maryjane.jpg'
     };
     $scope.identities = [$scope.bob, $scope.mary];
     $scope.user = $scope.bob;
