@@ -38,11 +38,11 @@ module Conversions
   end
 
   def hex_to_bytes(hex)
-    [hex].pack('H*')
+    hex ? [hex].pack('H*') : nil
   end
 
   def bytes_to_hex(bytes)
-    bytes.unpack('H*')[0]
+    bytes ? bytes.unpack('H*')[0] : nil
   end
 
   #################

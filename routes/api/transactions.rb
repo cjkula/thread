@@ -12,6 +12,12 @@ def parse_asset_type(asset_type)
     Output::VALUE_ASSET_TYPE
   when 'sha256'
     Output::SHA256_ASSET_TYPE
+  when 'rmd160'
+    Output::RMD160_ASSET_TYPE
+  when 'rmd160-root'
+    Output::RMD160_ROOT_TYPE
+  when 'rmd160-leaf'
+    Output::RMD160_LEAF_TYPE
   end
 end
 
@@ -29,7 +35,7 @@ def transaction_to_json(transaction)
     {
       assetType: output.asset_type,
       value:     output.value,
-      asset:     output.asset ? bytes_to_hex(output.asset) : nil,
+      asset:     bytes_to_hex(output.asset),
       script:    output.script.humanize,
       scriptHex: bytes_to_hex(output.script.serialize)
     }
@@ -74,7 +80,8 @@ post '/api/transactions.json' do
   transaction.outputs = (tx_params['outputs'] || []).map do |attrs|
     Output.new asset_type:      attrs['assetType'] ? parse_asset_type(attrs['assetType']) : nil,
                value:           integerize(attrs['value']),
-               asset:           attrs['asset'] ? hex_to_bytes(attrs['asset']) : nil,
+               root:            hex_to_bytes(attrs['root']),
+               asset:           hex_to_bytes(attrs['asset']),
                script:          Script.import_human_readable(attrs['script'])
   end
 

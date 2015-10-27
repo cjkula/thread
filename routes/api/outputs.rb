@@ -14,17 +14,6 @@ def all_outputs
   end.flatten
 end
 
-### Too generalized? ###
-# def filtered_outputs(filter = {})
-#   all_outputs.select do |outputs|
-#     filter.keys.all? do |key|
-#       desired = filter[key]
-#       actual = t.send(key)
-#       desired.is_a?(Array) ? desired.include?(actual) : (actual == desired)
-#     end
-#   end
-# end
-
 # filter only for public key(s) in outputs
 def filtered_outputs(filter = {})
   if (addresses = filter[:addresses])
@@ -46,7 +35,8 @@ def format_output(output)
     transactionUid: output.transaction_uid,
     assetType:      output.asset_type,
     value:          output.value,
-    asset:          output.asset ? bytes_to_hex(output.asset) : nil,
+    root:           bytes_to_hex(output.root),
+    asset:          bytes_to_hex(output.asset),
     script:         output.script.humanize,
     scriptHex:      bytes_to_hex(output.script.serialize)
   }

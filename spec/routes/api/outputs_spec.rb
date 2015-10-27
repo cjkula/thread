@@ -114,6 +114,7 @@ describe "/outputs API" do
       get '/api/assets.json', addresses: [bytes_to_base58(address1), bytes_to_base58(address3)]
       expect(JSON.parse(last_response.body).length).to eq(2)
     end
+    it "should retrieve by asset root"
   end
 
 end

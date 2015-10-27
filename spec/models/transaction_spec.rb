@@ -111,7 +111,7 @@ describe Transaction do
         expect(bytes_to_hex(transaction.serialize)).to eq('0002' + bytes_to_hex(prev_transaction_uid1) + '0001' + '0003021111' +
                                                                    bytes_to_hex(prev_transaction_uid2) + '0002' + '0003022222' +
                                                           '0002' + '0000000a' + '000302' + bytes_to_hex('aa') +
-                                                                   'ffffffff' + bytes_to_hex(asset2) + '000302' + bytes_to_hex('zz'))
+                                                                   '80000000' + bytes_to_hex(asset2) + '000302' + bytes_to_hex('zz'))
       end
       it "accepts a transaction with no inputs" do
         transaction = Transaction.new( inputs: [], outputs: [ Output.new(value: 14, script: Script.new([:op_verify])) ] )
@@ -144,7 +144,7 @@ describe Transaction do
         reconstructed.deserialize(hex_to_bytes('0002' + bytes_to_hex(prev_transaction_uid1) + '0001' + '000504' + bytes_to_hex('1111') +
                                                         bytes_to_hex(prev_transaction_uid2) + '0002' + '000504' + bytes_to_hex('2222') +
                                                '0002' + '0000000a' + '000302' + bytes_to_hex('11') +
-                                                        'ffffffff' + bytes_to_hex(asset2) + '000302' + bytes_to_hex('22')))
+                                                        '80000000' + bytes_to_hex(asset2) + '000302' + bytes_to_hex('22')))
 
         expect(reconstructed.inputs.size).to eq(2)
         input1 = reconstructed.inputs[0]

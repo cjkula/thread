@@ -82,7 +82,7 @@ describe '/api/transactions' do
         expect(output.asset).to be_nil
         expect(output.script).to eq([:op_dup])
       end
-      it "should create a transaction with an asset output" do
+      it "should create a transaction with a SHA256 asset output" do
         asset = sha256('something')
         t = transaction_post_and_fetch(outputs: [{ assetType: 'SHA256', asset: bytes_to_hex(asset), script: Script.new([:op_verify]).humanize }])
         expect(t.inputs).to eq([])
@@ -91,6 +91,42 @@ describe '/api/transactions' do
         expect(output.value).to be_nil
         expect(output.asset_type).to eq(Output::SHA256_ASSET_TYPE)
         expect(output.asset).to eq(asset)
+        expect(output.script).to eq([:op_verify])
+      end
+      it "should create a transaction with an RMD160 asset output" do
+        asset = rmd160('something')
+        t = transaction_post_and_fetch(outputs: [{ assetType: 'RMD160', asset: bytes_to_hex(asset), script: Script.new([:op_verify]).humanize }])
+        expect(t.inputs).to eq([])
+        expect(t.outputs.length).to eq(1)
+        output = t.outputs[0]
+        expect(output.value).to be_nil
+        expect(output.asset_type).to eq(Output::RMD160_ASSET_TYPE)
+        expect(output.asset).to eq(asset)
+        expect(output.script).to eq([:op_verify])
+      end
+      it "should create a transaction with an RMD160 root asset output" do
+        root = rmd160('root')
+        t = transaction_post_and_fetch(outputs: [{ assetType: 'RMD160-ROOT', root: bytes_to_hex(root), script: Script.new([:op_verify]).humanize }])
+        expect(t.inputs).to eq([])
+        expect(t.outputs.length).to eq(1)
+        output = t.outputs[0]
+        expect(output.value).to be_nil
+        expect(output.asset_type).to eq(Output::RMD160_ROOT_TYPE)
+        expect(output.root).to eq(root)
+        expect(output.asset).to eq(root)
+        expect(output.script).to eq([:op_verify])
+      end
+      it "should create a transaction with an RMD160 leaf asset output" do
+        root = rmd160('v1')
+        leaf = rmd160('v2')
+        t = transaction_post_and_fetch(outputs: [{ assetType: 'RMD160-LEAF', root: bytes_to_hex(root), asset: bytes_to_hex(leaf), script: Script.new([:op_verify]).humanize }])
+        expect(t.inputs).to eq([])
+        expect(t.outputs.length).to eq(1)
+        output = t.outputs[0]
+        expect(output.value).to be_nil
+        expect(output.asset_type).to eq(Output::RMD160_LEAF_TYPE)
+        expect(output.root).to eq(root)
+        expect(output.asset).to eq(leaf)
         expect(output.script).to eq([:op_verify])
       end
       it "should create a transaction with an input" do
