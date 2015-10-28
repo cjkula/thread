@@ -1,15 +1,25 @@
-<h3>Keys</h3>
+<div class="row">
+  <div class="col-sm-3"></div>
 
-<p>Locally-stored key blockchain key collection</p>
+  <div class="col-cell col-sm-6">
+    <h3>Keys</h3>
+    <p>Locally-stored key blockchain key collection</p>
+    <br>
+    <table class="keys table table-striped">
+      <tbody>
+      <tr ng-repeat="key in keys track by key.base58">
+        <td class="key"> <a href="#/keys/{{key.base58}}">{{key.base58}}</a> </td>
+        <td class="key"> <a href="#/keys/{{key.base58}}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a> </td>
+      </tr>
+      </tbody>
+    </table>
 
-<div class="keys">
-  <p ng-repeat="key in keys track by key.base58">
-    <a href="#/keys/{{key.base58}}">{{key.base58}}</a>
-  </p>
+    <p ng-hide="keys.length">none</p>
+
+    <form data-ng-submit="generateKey()">
+    <input type="submit" value="Generate" class="btn btn-primary"><span class="glyphicon glyphicon-key" aria-hidden="true"></span></input>
+    </form>
+  </div>
+
+  <div class="col-sm-3"></div>
 </div>
-
-<p ng-hide="keys.length">none</p>
-
-<form data-ng-submit="generateKey()">
-  <input type="submit" value="Generate Another Key" class="btn btn-default" />
-</form>

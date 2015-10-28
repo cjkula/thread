@@ -1,13 +1,25 @@
-<h4>Key Detail:</h4>
+<div class="row">
+    <div class="col-sm-3"></div>
 
-<label>Address (base 58)</label>
-<p>{{key.base58}}</p>
+    <div class="col-cell col-sm-6">
+        <h3>Key Detail:</h3>
+        <br>
+        <dl class="dl-horizontal">
+            <dt>Address (base 58)</dt>
+            <dd class="wordwrap">{{key.base58}}</dd>
+            <br/>
+            <dt>Address (hex)</dt>
+            <dd class="wordwrap">{{key.hex}}</dd>
+            <br/>
+            <dt>Public Key (hex)</dt>
+            <dd class="wordwrap">{{key.publicKey}}</dd>
+            <br/>
+            <dt>Private Key (hex)</dt>
+            <dd class="wordwrap">{{key.privateKey}}</dd>
+        </dl>
+        <br>
+        <a class="btn btn-primary" style="float: right" href="explorer#/keys" role="button"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>Back</a>
+    </div>
 
-<label>Address (hex)</label>
-<p>{{key.hex}}</p>
-
-<label>Public Key (hex)</label>
-<p>{{key.publicKey}}</p>
-
-<label>Private Key (hex)</label>
-<p>{{key.privateKey}}</p>
+    <div class="col-sm-3"></div>
+</div>

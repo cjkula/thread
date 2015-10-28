@@ -1,11 +1,22 @@
-<h3>Transactions</h3>
+<div class="row">
+  <div class="col-sm-3"></div>
 
-<ul class="transaction">
-  <li ng-repeat="transaction in transactions">
-    <a href="#/transactions/{{transaction.uid}}">{{transaction.uid}}</a>
-  </li>
-</ul>
+  <div class="col-cell col-sm-6">
+    <h3>Transactions</h3>
+    <br>
+    <table class="transactions table table-striped">
+      <tbody>
+      <tr ng-repeat="transaction in transactions">
+        <td class="transaction"> <a href="#/transactions/{{transaction.uid}}">{{transaction.uid}}</a> </td>
+        <td class="transaction"> <a href="#/transactions/{{transaction.uid}}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a> </td>
+      </tr>
+      </tbody>
+    </table>
 
-<p ng-hide="transactions.length">none</p>
+    <p ng-hide="transactions.length">none</p>
+    <a href="#/transactions/new" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Transaction</a>
 
-<a href="#/transactions/new" class="btn btn-default">New Transaction</a>
+  </div>
+  <div class="col-sm-3"></div>
+</div>
+
