@@ -1,0 +1,15 @@
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-cell col-sm-6">
+
+    <h3>Documents</h3>
+
+    <ul class="outputs">
+      <li ng-repeat="document in documents">
+        <a href="#/documents/{{ document.uid }}">{{ document.uid }}</a>
+      </li>
+    </ul>
+
+  </div>
+  <div class="col-sm-3"></div>
+</div>

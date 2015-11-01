@@ -24,8 +24,9 @@
 
 <ol class="outputs">
   <li ng-repeat="output in transaction.outputs">
-    <p><label>Asset Type</label> {{output.assetType}}</p>
+    <p><label>Type</label> {{output.outputType}}</p>
     <p ng-if="output.value"><label>Value</label> {{output.value}}</p>
+    <p ng-if="output.root"><label>Root</label> {{output.root}}</p>
     <p ng-if="output.asset"><label>Asset</label> {{output.asset}}</p>
     <p><label>Script</label> {{output.script}}</p>
     <p><label>Script (hex)</label> {{output.scriptHex}}</p>

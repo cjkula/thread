@@ -37,6 +37,14 @@ explorerApp.config(['$routeProvider',
         templateUrl: 'partials/explorer/block-list.html',
         controller: 'BlockListCtrl'
       }).
+      when('/documents/:uid', {
+        templateUrl: 'partials/explorer/document-detail.html',
+        controller: 'DocumentDetailCtrl'
+      }).
+      when('/documents', {
+        templateUrl: 'partials/explorer/document-list.html',
+        controller: 'DocumentListCtrl'
+      }).
       otherwise({
         redirectTo: '/'
       });

@@ -63,6 +63,20 @@ explorerControllers.controller('AssetListCtrl', ['$scope', '$http',
     });
   }]);
 
+explorerControllers.controller('DocumentListCtrl', ['$scope', '$http',
+  function($scope, $http) {
+    $http.get('/api/documents.json').success(function(data) {
+      $scope.documents = data;
+    });
+  }]);
+
+explorerControllers.controller('DocumentDetailCtrl', ['$scope', '$routeParams', '$http',
+  function($scope, $routeParams, $http) {
+    $http.get('/api/documents/' + $routeParams.uid + '.json').success(function(data) {
+      $scope.document = data.str;
+    });
+  }]);
+
 explorerControllers.controller('BlockListCtrl', ['$scope', '$http',
   function($scope, $http) {
     $scope.blocks = [];
@@ -72,7 +86,7 @@ explorerControllers.controller('BlockListCtrl', ['$scope', '$http',
   }]);
 
 function getKeys() {
-  var keys = localStorage.getItem('thread_stash_keys');
+  var keys = localStorage.getItem('thread_keys');
   return keys ? JSON.parse(keys) : [];
 }
 
@@ -87,7 +101,7 @@ explorerControllers.controller('KeyListCtrl', ['$scope', '$http',
     $scope.generateKey = function() {
       $http.get('/api/addresses/generate.json').success(function(data) {
         $scope.keys.push(data);
-        localStorage.setItem('thread_stash_keys', JSON.stringify($scope.keys));
+        localStorage.setItem('thread_keys', JSON.stringify($scope.keys));
       });
     };
   }]);

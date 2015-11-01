@@ -1,5 +1,14 @@
 var spoolApp = angular.module('spoolApp', []);
 
+function getKeys() {
+  var keys = localStorage.getItem('thread_keys');
+  return keys ? JSON.parse(keys) : [];
+}
+
+function getKeyByBase58(base58) {
+  return _.find(getKeys(), { 'base58': base58 });
+}
+
 angular.module('spoolApp').directive('ngEnter', function() {
         return function(scope, element, attrs) {
             element.bind("keydown keypress", function(event) {
@@ -14,23 +23,32 @@ angular.module('spoolApp').directive('ngEnter', function() {
         };
     });
 
-spoolApp.controller('UserCtrl', ['$scope',
-  function($scope) {
+spoolApp.controller('UserCtrl', ['$scope', '$http',
+  function($scope, $http) {
+    var addresses = _.map(getKeys(), 'base58').join(',');
+
+    $http.get('/api/identities.json').success(
+      function(response) {
+        var identities = $scope.identities = response,
+            uids = _.uniq(_.pluck(identities, 'root'));
+        console.log(identities);
+        console.log(uids);
+      });
+
     $scope.bob = {
       handle: 'JoeBob1',
-        fullName: 'Joe Bob Briggs',
+      fullName: 'Joe Bob Briggs',
       description: 'King of all rewritable media',
-      rootAddress: '18XyNMz3oumDcHVqGgsiWei3DbKDWxv1C6',
-        avatar: 'avatars/joebob.jpg'
+      avatar: 'avatars/joebob.jpg'
     };
     $scope.mary = {
       handle: 'MaryJane2',
-        fullName: 'Mary Jane Paul',
+      fullName: 'Mary Jane Paul',
       description: 'Cleaning all the things since 2009',
-      rootAddress: '18dx6ij2cMk4VdwEN5Hb8LTMdefz9QP9xW',
-        avatar: 'avatars/maryjane.jpg'
+      avatar: 'avatars/maryjane.jpg'
     };
-    $scope.identities = [$scope.bob, $scope.mary];
+    $scope.following = [$scope.bob];
+    $scope.notFollowing = [$scope.mary];
     $scope.user = $scope.bob;
   }]);
 

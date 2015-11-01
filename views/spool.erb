@@ -74,13 +74,36 @@
 
           <div class="panel panel-primary">
             <div class="panel-heading">
+              <h5 style="color: white ">Following:</h5>
+            </div>
+            <div class="panel-body">
+
+
+                <table class="table">
+                  <tr ng-repeat="user in following">
+                    <td class="avatar"><img class="center-block" ng-src="{{user.avatar}}" height="40" width="40"></td>
+                    <td class="handle">{{ user.handle }}</td>
+                    <td>
+                      <button type="button" class="btn btn-success btn-sm">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Unfollow
+                      </button>
+                    </td>
+                  </tr>
+                </table>
+
+
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
               <h5 style="color: white ">Who to Follow:</h5>
             </div>
             <div class="panel-body">
 
 
                 <table class="table">
-                  <tr ng-repeat="user in identities">
+                  <tr ng-repeat="user in notFollowing">
                     <td class="avatar"><img class="center-block" ng-src="{{user.avatar}}" height="40" width="40"></td>
                     <td class="handle">{{ user.handle }}</td>
                     <td>
