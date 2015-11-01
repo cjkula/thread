@@ -6,13 +6,14 @@ class Transaction
   include MongoMapper::Document
   include Conversions
 
-  key :uid, String
-  key :blob, Binary
-  key :published, Boolean
+  key :uid,             String
+  key :blob,            Binary
+  key :published,       Boolean, default: false
+  key :released_outputs, Object,  default: [] # array of releasing transactionUids
   many :outputs
   attr_accessor :inputs
 
-  attr_accessible :uid, :blob, :published, :outputs, :inputs
+  attr_accessible :uid, :blob, :published, :inputs, :outputs, :released_outputs
 
   class Invalid < StandardError; end
   class NotValidated < StandardError; end
@@ -22,14 +23,36 @@ class Transaction
     super
   end
 
-  def save
-    raise NotValidated unless validated?
-    raise Invalid unless valid?
+  def save(opts = {})
+    if opts[:force]
+      @validated = true
+      @valid = true
 
-    bytes = serialize
-    self.blob = bytes
-    self.uid = bytes_to_hex(calculate_uid(bytes))
-    super
+    else
+      raise NotValidated unless validated?
+      raise Invalid unless valid?
+
+      bytes = serialize
+      self.blob = bytes
+      self.uid = bytes_to_hex(calculate_uid(bytes))
+    end
+
+    super()
+  end
+
+  def publish
+    published = true
+    save
+    releasePreviousTransactions
+  end
+
+  def releasePreviousTransactions
+    inputs.each do |input|
+      previous_tx_uid = input.output_transaction
+      prev_tx = Transaction.first(uid: bytes_to_hex(previous_tx_uid))
+      prev_tx.released_outputs[input.output_index] = uid
+      prev_tx.save(force: true)
+    end
   end
 
   def validate

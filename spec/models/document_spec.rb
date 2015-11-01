@@ -16,7 +16,7 @@ describe Document do
     expect(@document.size).to eq(@body.length)
   end
   it "should calculate the UID based on the document with headers" do
-    expect(@document.uid).to eq(rmd160(@headers + @body))
+    expect(@document.uid).to eq(bytes_to_hex(hash160(@headers + @body)))
   end
   it "should return the full document with headers" do
     expect(@document.content).to eq(@headers + @body)
@@ -32,7 +32,7 @@ describe Document do
     @document.headers = new_headers
     expect(@document.content_type).to eq('text/plain')
     expect(@document.content).to eq(new_headers + @body)
-    expect(@document.uid).to eq(rmd160(new_headers + @body))
+    expect(@document.uid).to eq(bytes_to_hex(hash160(new_headers + @body)))
     expect(@document.size).to eq(@body.length)
   end
   it "should be able to update just the body" do
@@ -40,7 +40,7 @@ describe Document do
     @document.body = new_body
     expect(@document.content_type).to eq('application/json')
     expect(@document.content).to eq(@headers + new_body)
-    expect(@document.uid).to eq(rmd160(@headers + new_body))
+    expect(@document.uid).to eq(bytes_to_hex(hash160(@headers + new_body)))
     expect(@document.size).to eq(new_body.length)
   end
   it "should be able to update the full content" do
@@ -49,7 +49,7 @@ describe Document do
     @document.content = new_headers + new_body
     expect(@document.content_type).to eq('text/plain')
     expect(@document.content).to eq(new_headers + new_body)
-    expect(@document.uid).to eq(rmd160(new_headers + new_body))
+    expect(@document.uid).to eq(bytes_to_hex(hash160(new_headers + new_body)))
     expect(@document.size).to eq(new_body.length)
   end
 end

@@ -39,20 +39,19 @@ class Script < Array
     end
   end
 
-  def serialize
+  def serialize(include_length = true)
     output = map { |step| step_to_bytes(step) }.join('')
     len = output.size
     raise ScriptLengthError unless len < 65536
-    hex_to_bytes(hex4(len)) + output
+    include_length ? hex_to_bytes(hex4(len)) + output : output
   end
 
   def deserialize(input)
     clear # replace any existing script
 
     # length of the script is stored in hex in leading 2 bytes
-    len = bytes_to_hex(input[0..1]).to_i(16)
-    str = input[2...(len + 2)]
-
+    len = bytes_to_hex(input[0..1]).to_i(16) + 2
+    str = input[2...len]
     while str.size > 0
       code = str[0].ord
       str = str[1..-1]
@@ -65,8 +64,7 @@ class Script < Array
       end
     end
 
-    # return the unparsed balance
-    input[(len + 2)..-1]
+    len # return the number of characters used
   end
 
   def humanize
@@ -93,12 +91,11 @@ class Script < Array
   def step_to_bytes(data)
     if (op = OP_CODES[data])
       op.chr
-    elsif data.is_a?(String)
-      len = data.length
-      raise InvalidStringLength if len == 0 or len > 75
-      len.chr + data
     else
-      raise InvalidScriptData
+      str = data.to_s
+      len = str.length
+      raise InvalidStringLength if len == 0 or len > 75
+      len.chr + str
     end
   end
 
