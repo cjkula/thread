@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" ng-app="seedApp">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Seed</title>
+    <script src="js/angular.js"></script>
+    <script src="js/angular-route.js"></script>
+    <script src="js/lodash.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="application/javascript">
+      var seedApp = angular.module('seedApp', []);
+      seedApp.controller('SeedCtrl', ['$scope', '$http',
+        function($scope, $http) {
+          $http.get('/spool/seed.json').then(
+            function(response) {
+              localStorage.setItem('thread_keys', JSON.stringify(response.data));
+              $('body').text('Seeded');
+            },
+            function(response) {
+              $('body').text('ERROR: ' + JSON.stringify(response.data));
+            });
+        }]);
+    </script>
+</head>
+<body ng-controller="SeedCtrl">
+  Seeding...
+</body>
+</html>
