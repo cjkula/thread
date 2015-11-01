@@ -2,38 +2,10 @@ require 'json'
 require 'conversions'
 include Conversions
 
-def all_outputs
-  transactions = Transaction.all
-  transactions.each(&:deserialize)
-  transactions.map do |transaction|
-    transaction.outputs.tap do |outputs|
-      outputs.each do |output|
-        output.transaction_uid = transaction.uid
-      end
-    end
-  end.flatten
-end
-
-# filter only for public key(s) in outputs
-def filtered_outputs(filter = {})
-  if (addresses = filter[:addresses])
-    hex_addresses = addresses.map { |a| decode_base58(a).downcase }
-    all_outputs.select do |output|
-      (hex_addresses & output.script).length > 0
-    end
-  else
-    all_outputs
-  end
-end
-
-def outputs_with(field_name, filters = {})
-  filtered_outputs(filters).select(&field_name)
-end
-
-def format_output(output)
+def decorate_output(output)
   {
     transactionUid: output.transaction_uid,
-    assetType:      output.asset_type,
+    outputType:      output.output_type,
     value:          output.value,
     root:           bytes_to_hex(output.root),
     asset:          bytes_to_hex(output.asset),
@@ -42,18 +14,37 @@ def format_output(output)
   }
 end
 
+def preprocess_params
+  if (addresses = params.delete('addresses') || params.delete(:addresses))
+    params['addresses'] = addresses.split(',')
+  end
+  if (identities = params.delete('identities') || params.delete(:identities))
+    params['identities'] = identities.split(',')
+  end
+  params
+end
+
+def format_outputs(outputs)
+  outputs.map { |output| decorate_output(output) }.to_json
+end
+
 get '/api/outputs.json' do
-  content_type :json
-  filtered_outputs(params).map { |o| format_output(o) }.to_json
+  format_outputs(Output.where(preprocess_params))
 end
 
 get '/api/values.json' do
-  content_type :json
-  outputs_with(:value, params).map { |o| format_output(o) }.to_json
+  format_outputs(Output.with(:value, preprocess_params))
 end
 
 get '/api/assets.json' do
-  content_type :json
-  outputs_with(:asset, params).map { |o| format_output(o) }.to_json
+  format_outputs(Output.with(:asset, preprocess_params))
 end
 
+get '/api/identities.json' do
+  format_outputs(Output.identities(preprocess_params))
+end
+
+get "/api/identities/:uid.json" do
+  identity = Output.identity(hex_to_bytes(params[:uid])) # use Output::identities method
+  (identity ? decorate_output(identity) : { error: 'Output::NotFound' }).to_json
+end

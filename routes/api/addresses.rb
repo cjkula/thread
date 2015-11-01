@@ -2,7 +2,6 @@ require 'conversions'
 include Conversions
 
 get '/api/addresses/generate.json' do
-  content_type :json
   address = Address.new.generate
   {
     publicKey:  address.public_key,
