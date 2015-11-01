@@ -23,3 +23,9 @@ configure do
   MongoMapper.setup({env => {'uri' => uri}}, env)
   MongoMapper.database = "#{APP_NAME.downcase}_#{env}"
 end
+
+class MyApp < Sinatra::Base
+  before 'api/**/*.json' do
+    content_type 'application/json'
+  end
+end
